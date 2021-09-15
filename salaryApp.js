@@ -1,11 +1,11 @@
 
 
-function initializeChart(data){
+function initializeChart(data) {
   var chartData = formatChartData(data);
   drawChart(chartData);
 
 }
-  
+
 
 
 var formatChartData = function (data) {
@@ -15,14 +15,14 @@ var formatChartData = function (data) {
 
   return [
     {
-      key:'unnecessary data',
+      key: 'unnecessary data',
       values: dataWithUniqueName
     }
   ];
 }
 
 var getChartItems = function (data) {
-  var chartItems =[];
+  var chartItems = [];
   for (var i in data) {
     chartItems.push(data[i]);
   };
@@ -30,17 +30,17 @@ var getChartItems = function (data) {
   return chartItems;
 }
 
-var drawChart = function drawChart (data) {
-  nv.addGraph(function() {
+var drawChart = function drawChart(data) {
+  nv.addGraph(function () {
     var chart = nv.models.discreteBarChart()
-        .x(function(d) { return d.name })   
-        .y(function(d) { return parseFloat(d.salary) })
-        .staggerLabels(true)
-        ;
+      .x(function (d) { return d.name })
+      .y(function (d) { return parseFloat(d.salary) })
+      .staggerLabels(true)
+      ;
 
     d3.select('#chart svg')
-        .datum(data)
-        .call(chart);
+      .datum(data)
+      .call(chart);
 
     nv.utils.windowResize(chart.update);
 
@@ -51,87 +51,87 @@ var drawChart = function drawChart (data) {
 
 
 //save new item
-$(document).ready(function(){
+$(document).ready(function () {
   initializeChart(salary_data);
 
 
   $('#addRecord').click(addRecordHandler);
 
   var btnShowLast = document.getElementById("showLast");
-  btnShowLast.addEventListener("click", function showLastHandler (e) {
+  btnShowLast.addEventListener("click", function showLastHandler(e) {
     showLastItem();
   });
 
 
   document.getElementById("recordCount")
-          .addEventListener("click", function recordCountHandler (e) {
-            loadFirebaseData(showRecordCountListener);
-          });
+    .addEventListener("click", function recordCountHandler(e) {
+      loadFirebaseData(showRecordCountListener);
+    });
 
 
   // document.getElementById("recordCount").addEventListener("click", anotherRecordCountHandler);
 
- // $('#addRecord').click(secondHandler);
+  // $('#addRecord').click(secondHandler);
 
 
- window.setTimeout(function () {
-   document.getElementById("recordCount").setAttribute('class', 'btn btn-success');
- }, 2000)
+  window.setTimeout(function () {
+    document.getElementById("recordCount").setAttribute('class', 'btn btn-success');
+  }, 2000)
 
 });
-  
+
 
 var showRecordCountListener = function (chartItems) {
-  showRecordCount(chartItems[0].values);      
-}  
+  showRecordCount(chartItems[0].values);
+}
 
 var initialCountListener = function () {
   var itemsObj = JSON.parse(this.responseText);
-  var chartItems = getChartItems(itemsObj); 
-  $('#initial-count').text(chartItems.length); 
+  var chartItems = getChartItems(itemsObj);
+  $('#initial-count').text(chartItems.length);
 }
 
 
 function addRecordHandler() {
-    
-    var name = $('#name').val();
-    var salary = $('#salary').val();
-    
-    if(!name || !salary){
-      showDataError(name, salary);
-      return;
-    }
 
-    addRecord(name, salary);
+  var name = $('#name').val();
+  var salary = $('#salary').val();
 
+  if (!name || !salary) {
+    showDataError(name, salary);
+    return;
   }
 
-  function addRecord (name, salary) {
-    var newItem = getRecord(name, salary);
-    var id = Math.ceil(Math.random()*1000000000);
-    
-    salary_data[id] = newItem;
-    initializeChart(salary_data);
-  }
+  addRecord(name, salary);
 
-  function getRecord (name, salary) {
-    
-    var newItem = {
-      name: name,
-      salary: salary
-    };
+}
 
-    return newItem;
-  }
+function addRecord(name, salary) {
+  var newItem = getRecord(name, salary);
+  var id = Math.ceil(Math.random() * 1000000000);
 
-  var logGitData = function logGitData (reqListener) {
-  
-    var url = "http://khan4019.github.io/advJSDebug/scripts/salaryData.json";
+  salary_data[id] = newItem;
+  initializeChart(salary_data);
+}
 
-    var oReq = new XMLHttpRequest();
-    oReq.addEventListener('load', reqListener);
-    oReq.open("get", url, true);
-    oReq.send();
+function getRecord(name, salary) {
+
+  var newItem = {
+    name: name,
+    salary: salary
+  };
+
+  return newItem;
+}
+
+var logGitData = function logGitData(reqListener) {
+
+  var url = "http://khan4019.github.io/advJSDebug/scripts/salaryData.json";
+
+  var oReq = new XMLHttpRequest();
+  oReq.addEventListener('load', reqListener);
+  oReq.open("get", url, true);
+  oReq.send();
 };
 
 function secondHandler(e) {
@@ -139,89 +139,89 @@ function secondHandler(e) {
 }
 
 var showLastItem = function () {
-  
-    var items = salary_data;
-    for(var lastKey in items);
-    var lastItem = items[lastKey];
-    var lastRecord = getRecord(lastItem.name, lastItem.salary);
-    displayLastItemDialog(lastRecord);
-  
+
+  var items = salary_data;
+  for (var lastKey in items);
+  var lastItem = items[lastKey];
+  var lastRecord = getRecord(lastItem.name, lastItem.salary);
+  displayLastItemDialog(lastRecord);
+
 }
 
 var loadFirebaseData = function (resHandler) {
-    var data = salary_data;
-    var chartData = formatChartData(data);
-    resHandler(chartData);
+  var data = salary_data;
+  var chartData = formatChartData(data);
+  resHandler(chartData);
 }
 
 
 var displayLastItemDialog = function (lastItem) {
-    var dlg = $("#dialog-last-item");
-    dlg.removeClass('hide');
-    $('#showName').text(lastItem.name);
-    $('#showSalary').text(d3.format(",.0f")(lastItem.salary));
-    dlg.dialog({
-      buttons: {
-          "Ok" : function () {
-              $(this).dialog("close");
-          }
+  var dlg = $("#dialog-last-item");
+  dlg.removeClass('hide');
+  $('#showName').text(lastItem.name);
+  $('#showSalary').text(d3.format(",.0f")(lastItem.salary));
+  dlg.dialog({
+    buttons: {
+      "Ok": function () {
+        $(this).dialog("close");
       }
+    }
   });
 }
 
 var showDataError = function (name, salary) {
- var dlg = $("#dialog-error");
-    
+  var dlg = $("#dialog-error");
+
   dlg.removeClass('hide');
 
   toggleErrorMessage('#newName', name, "Who the hell you are talking about!");
-  toggleErrorMessage('#newSalary', salary,"How much that guy make!");
+  toggleErrorMessage('#newSalary', salary, "How much that guy make!");
 
   dlg.dialog({
-    width:600,
+    width: 600,
     buttons: {
-        "Ok" : function () {
-            $(this).dialog("close");
-        }
+      "Ok": function () {
+        $(this).dialog("close");
+      }
     }
-  }); 
+  });
 }
 
-function toggleErrorMessage(selector, value, msg){
-  if(value){
-    $(selector+'Line').hide();
+function toggleErrorMessage(selector, value, msg) {
+  if (value) {
+    $(selector + 'Line').hide();
   }
-  else{
-    $(selector+'Line').show();
+  else {
+    $(selector + 'Line').show();
     $(selector).text(msg);
   }
 }
 
 var showRecordCount = function (data) {
- var dlg = $("#dialog-record-count");
-    
+  var dlg = $("#dialog-record-count");
+
   dlg.removeClass('hide');
 
   $('#numberOfRecords').text(data.length);
 
   dlg.dialog({
     buttons: {
-        "Ok" : function () {
-            $(this).dialog("close");
-        }
+      "Ok": function () {
+        $(this).dialog("close");
+      }
     }
-  }); 
+  });
 }
 
-var anotherRecordCountHandler = function anotherRecordCountHandler (e) {
+var anotherRecordCountHandler = function anotherRecordCountHandler(e) {
   console.log('you have extra click handler');
-  for(let i = 0; i<10; i++){const isEven = i%2 ? 'odd' : 'even'; console.log(isEven) }
+  for (let i = 0; i < 10; i++) { const isEven = i % 2 ? 'odd' : 'even'; console.log(isEven) }
 }
 
 
-function longLineCode () {
+function longLineCode() {
   console.log('you have extra click handler');
-  for(let i = 0; i<10; i++){const isEven = i%2 ? 'odd' : 'even'; console.log(isEven) }
+  for (let i = 0; i < 10; i++) { const isEven = i % 2 ? 'odd' : 'even'; console.log(isEven) }
 }
 
 /*
@@ -242,16 +242,16 @@ function longLineCode () {
   need a coffee break!
 */
 
-var uniquifyNames = function(items){
+var uniquifyNames = function (items) {
   var uniqueNames = {};
-  
+
   return items.map(function (item) {
-    if(uniqueNames[item.name]){
+    if (uniqueNames[item.name] !== undefined) {
       uniqueNames[item.name] += " ";
       item.name += uniqueNames[item.name];
 
     }
-    else{
+    else {
       uniqueNames[item.name] = "";
     }
     return item;
